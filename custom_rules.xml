@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Bus-Stop-Alarm">
+	<!-- replace maps key -->
+	<!-- target for replacing maps key -->
+	<target name="replace-maps-key-for-build">
+		<fail message="maps.key.location is missing. Make sure to include it into your local.properties or to inject it through an env var" unless="maps.key.location" />
+		<echo>Starting with maps replacement for target ${build.target}</echo>
+		<echo>maps debug key: ${maps.debug.key}</echo>
+		<echo>maps release key: ${maps.release.key}</echo>
+		<if condition="${build.is.packaging.debug}">
+			<then>
+				<echo>Replace maps key with debug key in file ${maps.key.location}</echo>
+				<fail message="maps.debug.key is missing. Make sure to include it into your local.properties or to inject it through an env var" unless="maps.debug.key" />
+				<property name="maps.key" value="${maps.debug.key}" />
+			</then>
+			<else>
+				<fail message="maps.release.key is missing. Make sure to include it into your local.properties or to inject it through an env var" unless="maps.release.key" />
+				<property name="maps.key" value="${maps.release.key}" />
+			</else>
+		</if>
+		<echo>Replace maps key with key in file ${maps.key.location}</echo>
+		<!--replace file="${maps.key.location}" token='${maps.debug.key}' value='${maps.key}' />
+		<replace file="${maps.key.location}" token='${maps.release.key}' value='${maps.key}' /-->
+		<replace file="${maps.key.location}" token='maps.key' value='${maps.key}' />
+	</target>
+
+	<target name="-pre-build">
+		<ant target="replace-maps-key-for-build" />
+	</target>
+
+</project>
